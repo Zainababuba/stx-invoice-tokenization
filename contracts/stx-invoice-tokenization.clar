@@ -189,3 +189,49 @@
             (err error-response)) ;; Just pass through the error
     )
 )
+
+
+;; Additional data structures
+(define-map invoice-stats
+    { year: uint, month: uint }
+    {
+        total-volume: uint,
+        invoice-count: uint,
+        average-discount: uint,
+        total-claimed: uint
+    }
+)
+
+(define-map user-stats
+    principal
+    {
+        total-issued: uint,
+        total-purchased: uint,
+        active-invoices: uint,
+        total-claimed: uint
+    }
+)
+
+
+;; Read-only functions for stats
+(define-read-only (get-monthly-stats (year uint) (month uint))
+    (ok (default-to
+        {
+            total-volume: u0,
+            invoice-count: u0,
+            average-discount: u0,
+            total-claimed: u0
+        }
+        (map-get? invoice-stats { year: year, month: month })))
+)
+
+(define-read-only (get-user-stats (user principal))
+    (ok (default-to
+        {
+            total-issued: u0,
+            total-purchased: u0,
+            active-invoices: u0,
+            total-claimed: u0
+        }
+        (map-get? user-stats user)))
+)
